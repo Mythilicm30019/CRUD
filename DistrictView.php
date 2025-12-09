@@ -1,37 +1,40 @@
 <?php
 require_once 'library/config.php';
-$StudentRegisterData     = "SELECT * FROM contractor_detail ORDER BY cont_id ASC";
-$Query_StudentRegister   = pg_query($StudentRegisterData);
-$StudentDetailsArr       = array();
-if(pg_num_rows($Query_StudentRegister)>0){
-	while($List = pg_fetch_assoc($Query_StudentRegister)){
-		$StudentDetailsArr[] = $List;
+
+$CementGradeTypeData = "SELECT * FROM district_master ORDER BY dist_id ASC";
+$Query_CementGrade   = pg_query($CementGradeTypeData);
+$CementGradeArr       = array();
+if(pg_num_rows($Query_CementGrade)>0){
+	while($List = pg_fetch_assoc($Query_CementGrade)){
+		$CementGradeArr[] = $List;
 	}
 }
 if (isset($_POST['btn_delete']) && $_POST['btn_delete'] === "Delete") {
-	$id    = intval($_POST['id']);
-    $query = "UPDATE contractor_detail SET active = 0 WHERE cont_id = $id"; // soft delete
+	$id = intval($_POST['id']);
+    $query = "UPDATE district_master SET active = 0 WHERE dist_id = $id"; // soft delete
 
     if (pg_query($query)) {
-        $msg ="Contractor Details Deleted Successfully";
+        $msg="District Master Deleted Successfully";
 		echo $msg;
     } else {
-        $msg ="Contractor Details not deleted, please try again...!!";
+        $msg="District not deleted, please try again...!!";
     }
 
     exit; 
 }
 if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete") {
-	$id    = intval($_POST['id']);
-    $query = "UPDATE contractor_detail SET active = 1 WHERE cont_id = $id"; // soft delete
+	$id = intval($_POST['id']);
+    $query = "UPDATE district_master SET active = 1 WHERE dist_id = $id"; // soft delete
     if (pg_query($query)) {
-        $msg ="Contractor Details Activated Successfully";
+        $msg="District Type Activated Successfully";
 		echo $msg;
     } else {
-        $msg ="Contractor Details not activated, please try again...!!";
+        $msg="District Type not activated, please try again...!!";
     }
     exit; 
 }
+
+
 ?>
 <link rel="stylesheet" href="dashboard/MyView/bootstrap.min.css">
 <?php include "Header.html"; ?>
@@ -41,11 +44,11 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 	window.history.forward();
 	function noBack() { window.history.forward(); }
 	function goBack(){
-		url = "ContractorDetail.php";
+		url = "DistrictMaster.php";
 		window.location.replace(url);
 	}
 	 function RedirectToEdit(EditId) {
-        var url = "ContractorDetail.php?action=EDIT&id=" + EditId;
+        var url = "DistrictMaster.php?action=EDIT&id=" + EditId;
         window.location.href = url;
     }
 </script>
@@ -55,7 +58,7 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
             <?php include "Menu.php"; ?>
             <!--==============================Content=================================-->
 			<div class="content">
-				<div class="title">Contractor Details View & Edit</div>
+				<div class="title">District View & Edit</div>
 				<div class="container_12">
 					<div class="grid_12" align="center">
 						<blockquote class="bq1 stable" style="overflow:auto">
@@ -64,7 +67,7 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 									<div class="div12">
 										<div class="card cabox">
 											<div class="face-static">
-												<div class="card-header inkblue-card" align="center">&nbsp;Contractor Details  - View</div>
+												<div class="card-header inkblue-card" align="center">&nbsp;District - View</div>
 												<div class="card-body padding-1 ChartCard" id="CourseChart">
 													<div class="divrowbox pt-2">
 														<div class="table-responsive dt-responsive ResultTable">
@@ -73,78 +76,68 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
                                                                     <thead>
 									                                	<tr class="note heading">
 									                                		<th class="colhead" style="text-align:center">SNo.</th>
-									                                		<th class="colhead" style="text-align:center">Contractor Name</th>
-									                                		<th class="colhead" style="text-align:center">Contractor Gender </th>
-                                                                            <th class="colhead" style="text-align:center">Mobile No</th>
-									                                		<th class="colhead" style="text-align:center">Mail Id</th>
-									                                		<th class="colhead" style="text-align:center">Address</th>
-									                                		<th class="colhead" style="text-align:center">GST</th>
-									                                		<th class="colhead" style="text-align:center">PAN No</th>
-																			<th class="colhead" style="text-align:center">ContractorType</th>
-																			<th class="colhead" style="text-align:center">Experiance Level</th>
-																			<th class="colhead" style="text-align:center">Work Type</th>
-																			<th class="colhead" style="text-align:center">State</th>
-																			<th class="colhead" style="text-align:center">ID Proof</th>
-																			<th class="colhead" style="text-align:center">State Id</th>
-
-																			<th class="colhead" style="text-align:center"></th>
-																			<th class="colhead" style="text-align:center">Action</th>
+									                                		<th class="colhead" style="text-align:center">District Name</th>
+									                                		<th class="colhead" style="text-align:center">Code</th>
+                                                                           <!--  <th class="colhead" style="text-align:center">Coefficient</th> -->
+									                                		<th class="colhead" style="text-align:center">Status</th>
+									                                		<th class="colhead" style="text-align:center"></th>
+									                                		<th class="colhead" style="text-align:center">Action</th>
+									                                		<th class="colhead" style="text-align:center"></th>
 									                                	</tr>
 									                                </thead>
                                                                     <tbody>
                                                                         <?php 
-                                                                        if(isset($StudentDetailsArr)){
-																			if(count($StudentDetailsArr) >0){
-                                                                            	$SNO = 1;
-                                                                            	foreach($StudentDetailsArr as $key=>$value){
+                                                                        if(isset($CementGradeArr)){
+                                                                            $SNO = 1;
+                                                                            foreach($CementGradeArr as $key=>$value){
                                                                                 
-                                                                       				 ?>
-								                                					<tr>
-																						<td align="center"><?php echo $SNO ?></td>
-																						<td align="left"><?php echo $value['cont_name'] ?></td>
-																						<td align="left"><?php echo $value['cont_gender'] ?></td>
-																						<td align="left"><?php echo $value['cont_mobileno'] ?></td>
-																						<td align="left"><?php echo $value['cont_mailid'] ?></td>
-																						<td align="left"><?php echo $value['cont_address'] ?></td>
-																						<td align="left"><?php echo $value['cont_gst'] ?></td>
-																						<td align="left"><?php echo $value['cont_panno'] ?></td>
-																						<td align="left"><?php echo $value['cont_type'] ?></td>
-																						<td align="left"><?php echo $value['experiance_level'] ?></td>
-																						<td align="left"><?php echo $value['work_type'] ?></td>
-																						<td align="left"><?php echo $value['cont_state'] ?></td>
-																						<td align="left"><?php echo $value['id_proof'] ?></td>
-																						<td align="left"><?php echo $value['state_id'] ?></td>
- 
-																						
+                                                                        ?>
+								                                		<tr>
+								                                			<td align="center"><?php echo $SNO ?></td>
+								                                			<td align="left"><?php echo $value['dist_name'] ?></td>
+								                                			<td align="left"><?php echo $value['dist_code'] ?></td>
+<!--                                                                             <td align="left"><?php echo $value['coefficient'] ?></td>
+ -->                                                                            <?php if($value['active'] == 1){ ?>
+								                                				<td align="left" style="width:100px">Active</td>
+								                                			<?php }
+                                                                            else{ ?>
+								                                				<td align="left" style="width:100px">Deleted</td>
+								                                			<?php }
+                                                                            if($value['active'] == 1){ ?>
 								                                				<td align="center" style="width:100px">
-                                                                                    <!-- <a data-url="CementGradeType?id=<?php echo $value['cont_id']; ?>" class=" BtnHref btn btn-info" name="btn_edit" id="btn_edit">
+                                                                                    <!-- <a data-url="CementGradeType?id=<?php echo $value['dist_id']; ?>" class=" BtnHref btn btn-info" name="btn_edit" id="btn_edit">
 																						Edit
 																					</a> -->
-																					<a  onclick="RedirectToEdit(<?php echo $value['cont_id']; ?>);" class=" BtnHref btn btn-info" name="btn_edit" id="btn_edit">
+																					<a  onclick="RedirectToEdit(<?php echo $value['dist_id']; ?>);" class=" BtnHref btn btn-info" name="btn_edit" id="btn_edit">
 																						Edit
 																					</a>
-																					<!-- <a  onclick="RedirectToEdit(<?php echo $value['cont_id']; ?>);" class=" BtnHref btn btn-info" name="btn_delete" id="btn_delete">
-																						Delete
-																					</a> -->
-																					<td align="center" style="width:100px">
+                                                                            <?php }
+                                                                            else{ ?>								                                				
+                                                                            </td>
+								                                				<td align="center" style="width:100px">
+								                                					<button type="button" disabled name="btn_edit" id="btn_edit" class="btn btn-default estEdit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
+								                                				</td>
+                                                                            <?php } ?>
+								                                			<td align="center" style="width:100px">
                                                                                 <?php if($value['active'] == 1){ ?>
-								                                					<button type="button" name = "btn_delete" id = "btn_delete" class="btn fa-btn-d gDelete tdelbtn Delete" data-id="<?php echo $value['cont_id']; ?>" title="Click here to delete" style="cursor: pointer;"><i class="fa fa-trash-o"></i></button>								
+								                                					<button type="button" name = "btn_delete" id = "btn_delete" class="btn fa-btn-d gDelete tdelbtn Delete" data-id="<?php echo $value['dist_id']; ?>" title="Click here to delete" style="cursor: pointer;"><i class="fa fa-trash-o"></i></button>								
 								                                				<?php }else{ ?>
 								                                					<button type="button" disabled name = "btn_delete" id = "btn_delete" class="btn btn-default Delete" style="cursor: pointer;"><i class="fa fa-trash-o"></i></button>											
                                                                                 <?php } ?>
-																					
-																						
-								                                						<?php
-                                                                       						 $SNO++; 
-                                                                        		}
-																			}else{  ?>
-																				<td colspan ='13'  align="center">No data found ...</td>
-																			<?php
-																			}
-
-                                                                    	}
-                                                                    	?>
-																					</tr>
+                                                                            </td>
+								                                			<td align="center" style="width:100px">
+				                                                                <?php if($value['active'] == 0){ ?>   
+								                                					<button type="button" name = "btn_undo_delete" id = "btn_undo_delete" class="btn btn-default tdelbtn UndoDelete" data-id="<?php echo $value['dist_id']; ?>" title="Click here to activate" onClick="UndoDeleteMaterialSubCat();" style="cursor: pointer;"><i class="fa fa-recycle"></i></button>
+								                                				<?php }else{ ?>
+								                                					<button type="button" disabled name = "btn_undo_delete" id = "btn_undo_delete" class="btn btn-default UndoDelete" style="cursor: pointer;"><i class="fa fa-recycle"></i></button>
+								                                			<?php } ?>	
+								                                			</td> 
+								                                		</tr>
+								                                	<?php
+                                                                        $SNO++; 
+                                                                        }
+                                                                    }
+                                                                    ?>
 								                                	</tbody>
 
                                                                 </table>
@@ -174,9 +167,9 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 <script>
 	$(document).ready(function(){
 		$("body").on("click",".Delete", function(){
-			var id = $(this).data("id");//console.log(id);
+			var id = $(this).data("id");console.log(id);
     		$.ajax({
-				url: "ContractorDetailView.php",
+				url: "DistrictMaster.php",
     		    type: "POST",
     		    data: { btn_delete: "Delete", id: id },
     		    success: function (response) {
@@ -188,7 +181,7 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 									label: ' OK ',
 									action: function(dialog) {
 										dialog.close();
-										window.location.replace('ContractorDetailView.php');
+										window.location.replace('DistrictMaster.php');
 									}
 								}]
 							});
@@ -200,7 +193,7 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 		$("body").on("click",".UndoDelete", function(){
 			var id = $(this).data("id");
     		$.ajax({
-				url: "ContractorDetailView.php",
+				url: "DisrictView.php",
     		    type: "POST",
     		    data: { btn_undodelete: "UndoDelete", id: id },
     		    success: function (response) {
@@ -212,7 +205,7 @@ if (isset($_POST['btn_undodelete']) && $_POST['btn_undodelete'] === "UndoDelete"
 									label: ' OK ',
 									action: function(dialog) {
 										dialog.close();
-										window.location.replace('ContractorDetailView.php');
+										window.location.replace('DisrictView.php');
 									}
 								}]
 							});

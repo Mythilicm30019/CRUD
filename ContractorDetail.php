@@ -19,11 +19,10 @@ if(isset($_POST['btn_save']) == "Save"){
 	$ContractorState = $_POST['txt_cont_state'];
 	$ContractorIDProof = $_POST['txt_id_proof'];
     $SaveContractorIDProof = implode(',',$ContractorIDProof);
-
-
-
+	$StateID          = $_POST['txt_cont_state'];
+	
 	if($ContractorID != NULL){
-        $update_query = "UPDATE contractor_detail SET cont_name='$ContractorName',cont_gender='$ContractorGender', cont_mobileno='$ContractorMobileNo', cont_mailid='$ContractorMailId', cont_address='$ContractorAddress', cont_gst='$ContractorGST', cont_panno='$ContractorPANNo', Cont_type='$SaveContractorType', experiance_level='$ContractorExperienceLevel', work_type='$ContractorworkType',cont_state='$ContractorState', id_proof='$SaveContractorIDProof' WHERE cont_id='$ContractorID'";
+        $update_query = "UPDATE contractor_detail SET cont_name='$ContractorName',cont_gender='$ContractorGender', cont_mobileno='$ContractorMobileNo', cont_mailid='$ContractorMailId', cont_address='$ContractorAddress', cont_gst='$ContractorGST', cont_panno='$ContractorPANNo', Cont_type='$SaveContractorType', experiance_level='$ContractorExperienceLevel', work_type='$ContractorworkType',cont_state='$ContractorState', id_proof='$SaveContractorIDProof',state_id='$StateID ', WHERE cont_id='$ContractorID'";
 		$update_sql1 = pg_query($update_query); 
 		if($update_sql1 == true){
 			$msg = "Contactor Details Updated Successfully..!!";
@@ -32,8 +31,8 @@ if(isset($_POST['btn_save']) == "Save"){
 		}
 	}
 	else{
-		$insert_query = "INSERT INTO contractor_detail (cont_name,	cont_gender, cont_mobileno, cont_mailid, cont_address, cont_gst, cont_panno, Cont_type, experiance_level, work_type,cont_state,id_proof,active) VALUES ('$ContractorName', '$ContractorGender', '$ContractorMobileNo','$ContractorMailId','$ContractorAddress', '$ContractorGST', '$ContractorPANNo','$SaveContractorType','$ContractorExperienceLevel','$ContractorworkType','$ContractorState','$SaveContractorIDProof','1')";
-       // echo($insert_query); 
+		$insert_query = "INSERT INTO contractor_detail (cont_name,	cont_gender, cont_mobileno, cont_mailid, cont_address, cont_gst, cont_panno, Cont_type, experiance_level, work_type,cont_state,id_proof,active,state_id) VALUES ('$ContractorName', '$ContractorGender', '$ContractorMobileNo','$ContractorMailId','$ContractorAddress', '$ContractorGST', '$ContractorPANNo','$SaveContractorType','$ContractorExperienceLevel','$ContractorworkType','$ContractorState','$SaveContractorIDProof','1','$StateID')";
+        //echo($insert_query); 
 		$insert_sql1  = pg_query($insert_query);  //INSERT QUERY //
 		if($insert_sql1 == true){
 			$msg = "Contractor Details Successfully Saved..!!";
@@ -41,6 +40,7 @@ if(isset($_POST['btn_save']) == "Save"){
 			$msg = "Kindly try again..!!";
 		}
 	}
+	
 
 }
 $GetEmployeeEducationArray ='';
@@ -62,7 +62,7 @@ if(isset($_GET['id'])){
 			$GetContractorTypeByID = explode(',',$ContractorTypeByID);
 			$ContractorExperienceLevelTypeByID  = $List['experiance_level'];
 			$ContractorWorkTypeByID    = $List['work_type'];
-			$ContractorStateTypeByID    = $List['cont_state'];
+			//$ContractorStateTypeByID    = $List['cont_state'];
 			$ContractorIDProofByID    = $List['id_proof'];
 			$GetContractorIDProofByID = explode(',',$ContractorIDProofByID);
 			
@@ -127,7 +127,7 @@ if(isset($_GET['id'])){
 														
 														<div class="row smclearrow"></div>
 														<div class="div3 lboxlabel">GST</div>											
-									            		<div class="div9"><input type="text" name= id="txt_cont_GST" maxlength="25" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $ContractorGSTByID; } ?>" style="width:500px" ></div>
+									            		<div class="div9"><input type="text" name="txt_cont_GST" id="txt_cont_GST" maxlength="25" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $ContractorGSTByID; } ?>" style="width:500px" ></div>
 									            		
 														<div class="row smclearrow"></div>
 														<div class="div3 lboxlabel">PAN No</div>											
@@ -152,27 +152,40 @@ if(isset($_GET['id'])){
 														</div>
 
 														<div class="row smclearrow"></div>
-									            		<div class="div3 lboxlabel">Work Type</div>											
+									            		<div class="div3 lboxlabel">Work Type </div>											
 									            		<div class="div9">
-															<select  name="txt_work_type" id="txt_work_type" maxlength="10" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $ContractorWorkTypeByID ; } ?>" style="width:500px">
-																<option value="">----Select ----	</option>
-																<option value="Labour" <?php if(isset($_GET['id']) && ($ContractorWorkTypeByID =="Labour")) echo "selected"; ?>>Labour</option>
-																<option value="Labour&Material" <?php if(isset($_GET['id'])&& ($ContractorWorkTypeByID =="Labour&Material")) echo "selected"; ?>>Labour & Material</option>
-																<option value="FullContract" <?php if(isset($_GET['id'])&&($ContractorWorkTypeByID =="FullContract")) echo "selected"; ?>>Full Contract</option>
-																<option value="DailyWages" <?php if(isset($_GET['id'])&&($ContractorWorkTypeByID =="DailyWages")) echo "selected"; ?>>Daily Wages</option>
-															</select>
-														</div>
-														<div class="row smclearrow"></div>
-									            		<div class="div3 lboxlabel">State </div>											
-									            		<div class="div9">
-															<select name="txt_cont_state" id="txt_cont_state" maxlength="10" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $ContractorStateTypeByID ; } ?>" style="width:500px">
-																<option value="select State">----Select ----</option>
-																<option value="TamilNadu" <?php if(isset($_GET['id']) && ($ContractorStateTypeByID=="TamilNadual")) echo "selected"; ?>>TamilNadu</option>
-																<option value="Kerala" <?php if(isset($_GET['id'])&& ($ContractorStateTypeByID=="Kerala")) echo "selected"; ?>>Kerala</option>
-																<option value="Assam" <?php if(isset($_GET['id'])&&($ContractorStateTypeByID=="Assam")) echo "selected"; ?>>Assam</option>
+															<select name="txt_work_type" id="txt_work_type" maxlength="10" class="tboxclass alphanumeric"  style="width:500px">
+																<option value="">----Select ----</option>
+																<?php
+																 $WorkerData="SELECT * from work_detail where active='1'";
+																 $WorkerDatasql = pg_query($WorkerData);
+																 while($row=pg_fetch_assoc($WorkerDatasql))
+																 {
+																	$selected=($row['work_id']==$selected_work_id)? "selected":"";
+																     echo "<option value='" . $row['work_id'] . "' $selected>" . $row['work_type'] . "</option>";
+																 }
+																
+																?>
 															</select>
 														</div>
 
+														<div class="row smclearrow"></div>
+									            		<div class="div3 lboxlabel">State </div>											
+									            		<div class="div9">
+															<select name="txt_cont_state" id="txt_cont_state" maxlength="10" class="tboxclass alphanumeric"  style="width:500px">
+																<option value="">----Select ----</option>
+																<?php
+																 $ContractorData="SELECT * from state_master where active='1'";
+																 echo ($ContractorData);
+                                                                 $ContractorDatasql = pg_query($ContractorData);
+																 while($row=pg_fetch_assoc($ContractorDatasql))
+																 {
+																	$selected=($row['state_id']==$selected_state_id)? "selected":"";
+																     echo "<option value='" . $row['state_id'] . "' $selected>" . $row['state_description'] . "</option>";
+																 }
+																?>
+															</select>
+														</div>
 														<div class="div3 lboxlabel">ID Proof</div>	
 														<div class="div9">
 															<div class="div3 lboxlabel">Aadhar<input type="checkbox"name="txt_id_proof[]" id="Aadhar" value="Aadhar" <?php if (isset($_GET['id']) && in_array('Aadhar', $GetContractorIDProofByID)) echo "checked"; ?> ></div>
@@ -232,19 +245,17 @@ var KillEvent = 0;
 		$("body").on("click","#btn_save", function(event){
 			if(KillEvent == 0){
 				var ContractorName  = $('#txt_cont_name').val();
-				var ContractorGender = $('#txt_cont_gen').val();
+				var ContractorGender = $('#txt_cont_gen').checked();
 				var ContractorMobileNo = $('#txt_cont_mbno').val();
 				var ContractorMailId  = $('#txt_cont_mail').val();
-				var ContractorAddress = $('txt_cont_addr').val();
-				var ContractorGST= $('txt_cont_GST').val();
-				var ContractorPanNo = $('#txt_cont_panno').val();
-				var ContractorType = $('txt_cont_type').val();
-				var ContractorPanNo = $('#txt_exp_level').val();
-				var ContractorWorkType = $('txt_work_type').val();
-				var ContractorType = $('txt_cont_type').val();
-				var ContractorPanNo = $('#txt_exp_level').val();
-				var ContractorState = $('txt_cont_state').val();
-				var ContractorIdProof = $('txt_id_proof').val();
+				var ContractorAddress = $('#txt_cont_addr').val();
+				var ContractorGST= $('#txt_cont_GST').checked();
+				var ContractorPanNo = $('#txt_cont_panno').checked();
+				var ContractorType = $('#txt_cont_type').val();
+				var ContractorExpLevel = $('#txt_exp_level').val();
+				var ContractorWorkType = $('#txt_work_type').val();
+				var ContractorState = $('#txt_cont_state').val();
+				var ContractorIdProof = $('#txt_id_proof').val();
 				
 				if(ContractorName == ""){
 					BootstrapDialog.alert("Error: Contractor Name should not be in empty...!");
@@ -280,13 +291,13 @@ var KillEvent = 0;
 					event.preventDefault();
 					event.returnValue = false;
 				}
-				else if(ontractorType == ""){
+				else if(ContractorType == ""){
 					BootstrapDialog.alert("Error: contractorType should not be in empty...!");
 					event.preventDefault();
 					event.returnValue = false;
 				}
-				else if(ContractorPanNo == ""){
-					BootstrapDialog.alert("Error:  ContractorPanNo should not be in empty...!");
+				else if(var ContractorExpLevel == ""){
+					BootstrapDialog.alert("Error:  var ContractorExpLevel should not be in empty...!");
 					event.preventDefault();
 					event.returnValue = false;
 				}
@@ -310,7 +321,7 @@ var KillEvent = 0;
 					event.preventDefault();
 					BootstrapDialog.show({
 						title: 'Confirmation Message',
-						message: 'Are you sure want to save Student Register?',
+						message: 'Are you sure want to save Contractor Register?',
 						closable: false, 				// <-- Default value is false,
 						draggable: false, 				// <-- Default value is false,
 						buttons: [
@@ -336,7 +347,7 @@ var KillEvent = 0;
 				}
 			}
 		});
-	});
+	
 
 </script>
 

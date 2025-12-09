@@ -53,7 +53,10 @@ $(document).ready(function(){
 									<li><a data-url="EmployeeRegister">Employee Register</a></li>
 									<li><a data-url="ItemMaster">Item Master</a></li>
 									<li><a data-url="ContractorDetail">ContractorDetails</a></li>
-									<li><a data-url="StateMaster">State</a></li>
+									<li><a data-url="StateMaster">State Master</a></li>
+									<li><a data-url="WorkMaster">Work Master</a></li>
+									<li><a data-url="DistrictMaster">DistricrMaster</a></li>
+
 								</ul> 
 							</div>
 						</div>

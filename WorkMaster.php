@@ -2,25 +2,25 @@
 @ob_start();
 require_once 'library/config.php';
 
-if(isset($_POST['btn_save']) == " Save "){
-	$StateId         = $_POST['state_id'];
-    $StateDesc        = $_POST['descrip_state'];
-    $StateCode        = $_POST['code_state'];
+if(isset($_POST['btn_save']) == "Save"){
+	$WorkId         = $_POST['work_id'];
+    $WorkType        = $_POST['txt_work_type'];
+    $WorkCode        = $_POST['txt_work_code'];
    // $CementGradeCoefficient = $_POST['coefficient_cement_grade'];
-	if($StateId != NULL){
-		$update_query = "UPDATE state_master SET state_description='$StateDesc',state_code='$StateCode',updated_at=NOW() WHERE state_id='$StateId '";
+	if($WorkId != NULL){
+		$update_query = "UPDATE work_detail SET Work_type='$WorkType',work_code='$WorkCode',updated_at=NOW() WHERE work_id='$WorkId'";
 		$update_sql1 = pg_query($update_query);
 		if($update_sql1 == true){
-			$msg = "State_master Updated Successfully..!!";
+			$msg = "Work_master Updated Successfully..!!";
 		}else{
 			$msg = "Kindly try again..!!";
 		}
 	}
 	else{
-		$insert_query = "INSERT INTO state_master (state_description, state_code,  active) VALUES ('$StateDesc', '$StateCode', 1)";
+		$insert_query = "INSERT INTO work_detail (Work_type, work_code,  active) VALUES ('$WorkType', '$WorkCode', 1)";
 		$insert_sql1  = pg_query($insert_query);
 		if($insert_sql1 == true){
-			$msg = "State_master Successfully Saved..!!";
+			$msg = "Work_master Successfully Saved..!!";
 		}else{
 			$msg = "Kindly try again..!!";
 		}
@@ -29,13 +29,13 @@ if(isset($_POST['btn_save']) == " Save "){
 }
 if(isset($_GET['id'])){
 	$CemantGradeID = $_GET['id'];
-	$SelectQuery = "SELECT * FROM state_master WHERE state_id='$StateID'";
+	$SelectQuery = "SELECT * FROM work_detail WHERE work_id='$WorkId'";
 	$CemantGradeQuery = pg_query($SelectQuery);
 	if($CemantGradeQuery != NULL){
 		if(pg_num_rows($CemantGradeQuery)>0){
 			$List = pg_fetch_assoc($CemantGradeQuery);
-			$StateDescByID    = $List['state_description'];
-    		$StateCodeByID    = $List['state_code'];
+			$WorkTypeByID    = $List['Work_type'];
+    		$WorkCodeByID    = $List['work_code'];
     		
 		}
 	}
@@ -49,7 +49,7 @@ if(isset($_GET['id'])){
 	window.history.forward();
 	function noBack() { window.history.forward(); }
 	function BtnView(){
-		url = "StateView.php";
+		url = "WorkView.php";
 		window.location.replace(url);
 	}
 	
@@ -60,7 +60,7 @@ if(isset($_GET['id'])){
             <?php include "Menu.php"; ?>
             <!--==============================Content=================================-->
 			<div class="content">
-				<div class="title">State Create</div>
+				<div class="title">Work Create</div>
 				<div class="container_12">
 					<div class="grid_12" align="center">
 						<blockquote class="bq1 stable" style="overflow:auto">
@@ -70,22 +70,28 @@ if(isset($_GET['id'])){
 									<div class="div10">
 										<div class="card cabox">
 											<div class="face-static">
-												<div class="card-header inkblue-card" align="center">State</div>
+												<div class="card-header inkblue-card" align="center">Work</div>
 									            <div class="card-body padding-1 ChartCard" id="CourseChart">
 									            	<div class="divrowbox  pt-2">
-														<div class="row smclearrow"></div>
-									            		<div class="div3 lboxlabel">state </div>											
-									            		<div class="div9"><input type="text" name="descrip_state" id="descrip_state" maxlength="10" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $StateDescByID; } ?>" style="width:500px"></div>
-									            		<div class="row smclearrow"></div>
-									            		
-														<div class="row smclearrow"></div>
+									            		<div class="row smclearrow"></div>                                                                             											
+									            		<div class="div3 lboxlabel">Work Type </div>	
+														<select>
+														        <option value="1" >Labour</option>
+																<option value="2" >Full Contract</option>
+																<option value="3" >Labour&Material</option>
+																<option value="4" >Bihar</option>
+																<option value="5" >DailyWages</option>
+
+															</select>
+
+															<div class="row smclearrow"></div>
 									            		<div class="div3 lboxlabel">Code </div>											
-									            		<div class="div9"><input type="text" name="code_state" id="code_state" maxlength="10" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $StateCodeByID; } ?>" style="width:500px"></div>
-									            		<div class="row smclearrow"></div>
+									            		<div class="div9"><input type="text" name="txt_work_code" id="txt_work_code" maxlength="10" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $WorkCodeByID; } ?>" style="width:500px"></div>
+														
 									            		<!-- <div class="div3 lboxlabel">Coefficient </div>											
 									            		<div class="div9"><input type="text" name="coefficient_cement_grade" id="coefficient_cement_grade" maxlength="25" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $CemantGradeCoefficient; } ?>" style="width:500px" ></div>	 -->																																																				
 									            		<div class="row smclearrow"></div>
-														<input type="hidden" name="state_id" id="state_id" maxlength="25" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $StateID; } ?>" style="width:500px" >
+														<input type="hidden" name="work_id" id="work_id" maxlength="25" class="tboxclass alphanumeric" value="<?php if(isset($_GET['id']) != "" ){ echo $WorkId; } ?>" style="width:500px" >
 									            		<div class="row smclearrow"></div>
 															<div class="div12" align="center">
 																<input type="button" class="btn btn-info" name="back" id="back" value="Back" />
@@ -125,7 +131,7 @@ if(isset($_GET['id'])){
 					label: ' OK ',
 					action: function(dialog) {
 						dialog.close();
-						window.location.replace('StateMaster.php');
+						window.location.replace('WorkMaster.php');
 					}
 				}]
 			});

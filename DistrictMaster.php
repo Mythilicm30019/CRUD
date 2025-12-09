@@ -7,11 +7,11 @@ if(isset($_POST['btn_save']) == " Save "){
     $DistName        = $_POST['txt_dist_name'];
     $DistCode       = $_POST['txt_dist_code'];
 	$StateID          = $_POST['txt_cont_state'];
-	echo($StateID);
+	//echo($StateID);
 
    // $CementGradeCoefficient = $_POST['coefficient_cement_grade'];
 	if($DistId!= NULL){
-		$update_query = "UPDATE district_master SET par_id='$StateID',dist_name='$DistName',dist_code='$DistCode',updated_at=NOW() WHERE dist_id='$DistId'";
+		$update_query = "UPDATE district_details SET par_id='$StateID',dist_name='$DistName',dist_code='$DistCode',updated_at=NOW() WHERE dist_id='$DistId'";
 		$update_sql1 = pg_query($update_query);
 		if($update_sql1 == true){
 			$msg = "District_master Updated Successfully..!!";
@@ -20,7 +20,8 @@ if(isset($_POST['btn_save']) == " Save "){
 		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 	}
 	else{
-		$insert_query = "INSERT INTO district_master (par_id,dist_name,dist_code,active) VALUES ('$StateID','$DistName', '$DistCode', 1)";
+		$insert_query = "INSERT INTO district_details (par_id,dist_name,dist_code,active) VALUES ('$StateID','$DistName','$DistCode', 1)";
+		//echo($insert_query);
 		$insert_sql1  = pg_query($insert_query);
 		if($insert_sql1 == true){
 			$msg = "District_master Successfully Saved..!!";
@@ -32,7 +33,7 @@ if(isset($_POST['btn_save']) == " Save "){
 }
 if(isset($_GET['id'])){
 	$CemantGradeID = $_GET['id'];
-	$SelectQuery = "SELECT * FROM district_master WHERE dist_id='$DistId'";
+	$SelectQuery = "SELECT * FROM district_details WHERE dist_id='$DistId'";
 	$CemantGradeQuery = pg_query($SelectQuery);
 	if($CemantGradeQuery != NULL){
 		if(pg_num_rows($CemantGradeQuery)>0){

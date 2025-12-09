@@ -176,14 +176,21 @@ if(isset($_GET['id'])){
 																<option value="">----Select ----</option>
 																<?php
 																 $ContractorData="SELECT * from state_master where active='1'";
-																 echo ($ContractorData);
+																// echo ($ContractorData);
                                                                  $ContractorDatasql = pg_query($ContractorData);
 																 while($row=pg_fetch_assoc($ContractorDatasql))
 																 {
-																	$selected=($row['state_id']==$selected_state_id)? "selected":"";
-																     echo "<option value='" . $row['state_id'] . "' $selected>" . $row['state_description'] . "</option>";
+																	$selected=($row['state_id'] == $selected_state_id)? "selected":"";
+																    echo "<option value='" . $row['state_id'] . "' $selected>" . $row['state_description'] . "</option>";
 																 }
 																?>
+															</select>
+														</div>
+														<div class="row smclearrow"></div>
+									            		<div class="div3 lboxlabel">District </div>											
+									            		<div class="div9">
+															<select name="cmb_cont_dist" id="cmb_cont_dist" maxlength="10" class="tboxclass alphanumeric" value ="" style="width:500px">
+																<option value="select State">----Select ----</option>
 															</select>
 														</div>
 														<div class="div3 lboxlabel">ID Proof</div>	
@@ -224,6 +231,7 @@ if(isset($_GET['id'])){
 
 <script>
     $(document).ready(function() {
+		// alert(1);
 		var msg = "<?php echo $msg; ?>";
 		document.querySelector('#top').onload = function(){
 		if(msg != ""){
@@ -240,113 +248,130 @@ if(isset($_GET['id'])){
 			}
 		};
 	});
-
-var KillEvent = 0;
-		$("body").on("click","#btn_save", function(event){
-			if(KillEvent == 0){
-				var ContractorName  = $('#txt_cont_name').val();
-				var ContractorGender = $('#txt_cont_gen').checked();
-				var ContractorMobileNo = $('#txt_cont_mbno').val();
-				var ContractorMailId  = $('#txt_cont_mail').val();
-				var ContractorAddress = $('#txt_cont_addr').val();
-				var ContractorGST= $('#txt_cont_GST').checked();
-				var ContractorPanNo = $('#txt_cont_panno').checked();
-				var ContractorType = $('#txt_cont_type').val();
-				var ContractorExpLevel = $('#txt_exp_level').val();
-				var ContractorWorkType = $('#txt_work_type').val();
-				var ContractorState = $('#txt_cont_state').val();
-				var ContractorIdProof = $('#txt_id_proof').val();
-				
-				if(ContractorName == ""){
-					BootstrapDialog.alert("Error: Contractor Name should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}else if(ContractorGender == ""){
-					BootstrapDialog.alert("Error: Contractor Gender should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorMobileNo == ""){
-					BootstrapDialog.alert("Error: ContractorMobileNo should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorMailId == ""){
-					BootstrapDialog.alert("Error: ContractorMailId should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorAddress == ""){
-					BootstrapDialog.alert("Error: ContractorAddress should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorGST == ""){
-					BootstrapDialog.alert("Error:  ContractorGST should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorPanNo == ""){
-					BootstrapDialog.alert("Error: ContractorPanNo should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorType == ""){
-					BootstrapDialog.alert("Error: contractorType should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(var ContractorExpLevel == ""){
-					BootstrapDialog.alert("Error:  var ContractorExpLevel should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorWorkType == ""){
-					BootstrapDialog.alert("Error:  ContractorWorkType should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if( ContractorState == ""){
-					BootstrapDialog.alert("Error:  ContractorState should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				else if(ContractorIdProof == ""){
-					BootstrapDialog.alert("Error:  CContractor IdProof should not be in empty...!");
-					event.preventDefault();
-					event.returnValue = false;
-				}
-				
-				else{
-					event.preventDefault();
-					BootstrapDialog.show({
-						title: 'Confirmation Message',
-						message: 'Are you sure want to save Contractor Register?',
-						closable: false, 				// <-- Default value is false,
-						draggable: false, 				// <-- Default value is false,
-						buttons: [
-							{
-								label: 'Ok',
-								cssClass: 'btn-primary',
-								action: function(dialog) {
-									dialog.close();
-									KillEvent = 1;
-									$("#btn_save").trigger( "click" );
-								}
-							},
-							{
-								label: 'Cancel',
-								cssClass: 'btn-secondary',
-								action: function(dialog) {
-									dialog.close();
-									KillEvent = 0;
-								}
-							}
-						]
+	$('body').on('change','#txt_cont_state',function(e){
+		var StatId          = $(this).val()
+		var $DistrictSelect = $('#cmb_cont_dist');
+		$.ajax({
+			type: 'POST',
+			url:  'DistrictsList.php',
+			data:  {ParId :StatId },
+			dataType: 'json',
+			success : function(data){
+				if(data !=null && data.length>0){
+					$.each(data,function(index, Districts){
+						var optionHtml = "<option value='" + Districts.dist_id + "'>" + Districts.dist_name + "</option>";
+						$DistrictSelect.append(optionHtml); // HERE WE ADD THE OPTION//
 					});
 				}
 			}
 		});
+	});
+	var KillEvent = 0;
+	$("body").on("click","#btn_save", function(event){
+		if(KillEvent == 0){
+			var ContractorName  = $('#txt_cont_name').val();
+			var ContractorGender = $('#txt_cont_gen').checked();
+			var ContractorMobileNo = $('#txt_cont_mbno').val();
+			var ContractorMailId  = $('#txt_cont_mail').val();
+			var ContractorAddress = $('#txt_cont_addr').val();
+			var ContractorGST= $('#txt_cont_GST').checked();
+			var ContractorPanNo = $('#txt_cont_panno').checked();
+			var ContractorType = $('#txt_cont_type').val();
+			var ContractorExpLevel = $('#txt_exp_level').val();
+			var ContractorWorkType = $('#txt_work_type').val();
+			var ContractorState = $('#txt_cont_state').val();
+			var ContractorIdProof = $('#txt_id_proof').val();
+			
+			if(ContractorName == ""){
+				BootstrapDialog.alert("Error: Contractor Name should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}else if(ContractorGender == ""){
+				BootstrapDialog.alert("Error: Contractor Gender should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorMobileNo == ""){
+				BootstrapDialog.alert("Error: ContractorMobileNo should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorMailId == ""){
+				BootstrapDialog.alert("Error: ContractorMailId should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorAddress == ""){
+				BootstrapDialog.alert("Error: ContractorAddress should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorGST == ""){
+				BootstrapDialog.alert("Error:  ContractorGST should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorPanNo == ""){
+				BootstrapDialog.alert("Error: ContractorPanNo should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorType == ""){
+				BootstrapDialog.alert("Error: contractorType should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorExpLevel == ""){
+				BootstrapDialog.alert("Error:  ContractorExpLevel should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorWorkType == ""){
+				BootstrapDialog.alert("Error:  ContractorWorkType should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if( ContractorState == ""){
+				BootstrapDialog.alert("Error:  ContractorState should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			else if(ContractorIdProof == ""){
+				BootstrapDialog.alert("Error:  CContractor IdProof should not be in empty...!");
+				event.preventDefault();
+				event.returnValue = false;
+			}
+			
+			else{
+				event.preventDefault();
+				BootstrapDialog.show({
+					title: 'Confirmation Message',
+					message: 'Are you sure want to save Contractor Register?',
+					closable: false, 				// <-- Default value is false,
+					draggable: false, 				// <-- Default value is false,
+					buttons: [
+						{
+							label: 'Ok',
+							cssClass: 'btn-primary',
+							action: function(dialog) {
+								dialog.close();
+								KillEvent = 1;
+								$("#btn_save").trigger( "click" );
+							}
+						},
+						{
+							label: 'Cancel',
+							cssClass: 'btn-secondary',
+							action: function(dialog) {
+								dialog.close();
+								KillEvent = 0;
+							}
+						}
+					]
+				});
+			}
+		}
+	});
 	
 
 </script>
